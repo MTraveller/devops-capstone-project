@@ -6,7 +6,7 @@ import logging
 import unittest
 import os
 from service import app
-from service.models import Account, DataValidationError, db
+from service.models import PersistentBase, Account, DataValidationError, db
 from tests.factories import AccountFactory
 
 DATABASE_URI = os.getenv(
@@ -58,6 +58,7 @@ class TestAccount(unittest.TestCase):
             date_joined=fake_account.date_joined,
         )
         self.assertIsNotNone(account)
+        self.assertIsNotNone(account.__repr__())
         self.assertEqual(account.id, None)
         self.assertEqual(account.name, fake_account.name)
         self.assertEqual(account.email, fake_account.email)
@@ -175,3 +176,8 @@ class TestAccount(unittest.TestCase):
         """It should not Deserialize an account with a TypeError"""
         account = Account()
         self.assertRaises(DataValidationError, account.deserialize, [])
+
+    def test_persistentbase_id_equal_none(self):
+        """It should assert none id"""
+        fake_account = PersistentBase()
+        self.assertEqual(fake_account.id, None)
